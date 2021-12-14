@@ -36,7 +36,7 @@ func main() {
 	}
 
 	if *zoneID == "" || *domain == "" {
-		fmt.Println("-iface, -zone-id and -domain are all required")
+		fmt.Println("-zone-id and -domain are both required")
 		os.Exit(1)
 	}
 
