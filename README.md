@@ -11,7 +11,7 @@ or migrate the domain.
 
 # AWS costs
 The costs you should be facing running this setup on AWS will be $0.50/month for
-the hosted domain in R53 plus $0.4 per 1M requests. SO you will pretty surely
+the hosted domain in R53 plus $0.4 per 1M requests. So you will pretty surely
 never exceed $1 even after adding tax.
 
 **WARNING**: Pushing just one wrong button in the AWS Console can cost you a lot
