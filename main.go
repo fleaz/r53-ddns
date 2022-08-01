@@ -9,16 +9,8 @@ import (
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/route53"
-	"github.com/imroc/req"
+	externalip "github.com/glendc/go-external-ip"
 )
-
-func IsIPv4(address string) bool {
-	return strings.Count(address, ":") < 2
-}
-
-func IsIPv6(address string) bool {
-	return strings.Count(address, ":") >= 2
-}
 
 func main() {
 	hostname := flag.String("hostname", "", "Hostname of this machine")
@@ -41,9 +33,10 @@ func main() {
 	}
 
 	var changes []*route53.Change
+	consensus := externalip.DefaultConsensus(nil, nil)
 
 	for _, addr_type := range []string{"A", "AAAA"} {
-		addr := getPublicIP(addr_type)
+		addr := getPublicIP(addr_type, consensus)
 		if addr != "" {
 			changes = append(changes, createChange(*hostname, *domain, addr, addr_type))
 		}
@@ -60,25 +53,18 @@ func main() {
 
 }
 
-type ApiResponse struct {
-	IP string `json:"ip"`
-}
-
-func getPublicIP(addrType string) string {
-	var url string
+func getPublicIP(addrType string, consensus *externalip.Consensus) string {
 	if addrType == "A" {
-		url = "https://api4.my-ip.io/ip.json"
+		consensus.UseIPProtocol(4)
 	} else {
-		url = "https://api6.my-ip.io/ip.json"
+		consensus.UseIPProtocol(6)
 	}
-	r, err := req.Get(url)
-	if err != nil || r.Response().StatusCode != 200 {
+	ip, err := consensus.ExternalIP()
+	if err != nil {
 		fmt.Printf("Could not determine your %s address\n", addrType)
 		return ""
 	}
-	data := ApiResponse{}
-	r.ToJSON(&data)
-	return data.IP
+	return ip.String()
 }
 
 func createChange(name string, domain string, addr string, addr_type string) *route53.Change {
