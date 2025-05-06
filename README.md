@@ -16,7 +16,7 @@ never exceed $1 even after adding tax.
 
 **WARNING**: Pushing just one wrong button in the AWS Console can cost you a lot
 of money. So if you play around with cloud stuff, always configure a "Billing
-alarm" so you wont be surprised at the end of the month with a big bill :)
+alarm" so you wont be surprised at the end of the month by a big bill :)
 
 # IAM Permissions
 You need to create an IAM user which has the permission to update records on the
@@ -41,11 +41,11 @@ desribed in the setup section is a good idea.
 
 # Running this tool
 Put the AWS keys you just created in the `~/.aws/credentials` file of the user
-which will run this tool and then create a cronjob looking like this which will
-call the tool every 15 minutes:
+which will run this tool, or expose them via environment variables.
+Then you can create a cronjob similar to this:
 ```
-*/15 * * * * /usr/local/bin/r53-ddns -zone-id <ZONE_ID> -domain <DOMAIN_NAME>
+*/15 * * * * /usr/local/bin/r53-ddns -zone-id ABCDEF12345678 -domain dyn.example.com -hostname cray
 ```
 
-Either wait until the first run or start the tool manually once and check the
-R53 dashboard for your newly generated AAAA and A records.
+If you want to set a record at the domain apex itself, use `-hostname @`.
+
