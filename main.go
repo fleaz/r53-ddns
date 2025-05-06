@@ -30,7 +30,7 @@ func createChange(hostname string, domain string, addr string, addrType string, 
 		// Record name for the apex is just the domain
 		name = domain
 	} else {
-		name = fmt.Sprintf("%s.%s", name, domain)
+		name = fmt.Sprintf("%s.%s", hostname, domain)
 	}
 
 	return &route53.Change{
